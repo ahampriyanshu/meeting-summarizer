@@ -101,21 +101,21 @@ def main():
     sample_transcripts = {
         "None": "",
         "Sample 1: Team Standup": """Alice: I finished the login feature yesterday. Ready to deploy.
-            Bob: Great! I'll deploy it tomorrow.
-            Charlie: I'm working on the dashboard. Should be done by Friday.
-            Alice: Can someone review my code before we deploy?
-            Bob: Sure, I'll review it today.""",
+Bob: Great! I'll deploy it tomorrow.
+Charlie: I'm working on the dashboard. Should be done by Friday.
+Alice: Can someone review my code before we deploy?
+Bob: Sure, I'll review it today.""",
         "Sample 2: Planning Meeting": """Sarah: Let's finalize the Q2 roadmap today. I think we should prioritize mobile app development.
-            Tom: I agree. Mobile is more important than new features right now.
-            Sarah: Great! I'll lead the mobile team then.
-            Tom: Sounds good. We need to hire 2 more developers by March.
-            Sarah: Yes, and marketing should start preparing the launch campaign.
-            Tom: I'll talk to the marketing team tomorrow.""",
+Tom: I agree. Mobile is more important than new features right now.
+Sarah: Great! I'll lead the mobile team then.
+Tom: Sounds good. We need to hire 2 more developers by March.
+Sarah: Yes, and marketing should start preparing the launch campaign.
+Tom: I'll talk to the marketing team tomorrow.""",
         "Sample 3: Bug Fix Sync": """Mike: Quick sync on the bug fixes everyone. I fixed the critical login bug.
-            Lisa: That's great! When will it be deployed?
-            Mike: This afternoon. Lisa, how's the performance issue?
-            Lisa: Still working on it. Should be done by end of week.
-            Mike: Perfect. Let me know if you need any help.""",
+Lisa: That's great! When will it be deployed?
+Mike: This afternoon. Lisa, how's the performance issue?
+Lisa: Still working on it. Should be done by end of week.
+Mike: Perfect. Let me know if you need any help.""",
     }
 
     # Initialize session state for transcript

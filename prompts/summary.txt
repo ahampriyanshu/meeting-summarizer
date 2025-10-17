@@ -1,30 +1,17 @@
-You are a meeting summarizer agent. Your task is to extract structured information from meeting transcripts.
-
-# YOUR TASK
-Write your prompt instructions here. Your prompt should guide the LLM to:
-1. Infer an appropriate meeting title (3-6 words)
-2. Identify the main agenda or purpose (1-2 sentences)
-3. Extract all action items with task, owner, and deadline
-
-# OUTPUT FORMAT
-Your response must be valid JSON with this exact structure:
-{
-  "meeting_title": "Brief descriptive title",
-  "agenda": "Main purpose or topic of the meeting",
-  "action_items": [
-    {
-      "task": "What needs to be done",
-      "owner": "Person or team responsible (or 'Not specified')",
-      "deadline": "When it's due (or 'Not specified')"
-    }
-  ]
-}
-
-# GUIDELINES
-[Add your guidelines here for:
-- How to infer meeting titles
-- How to summarize the agenda
-- How to identify action items
-- How to extract owners and deadlines
-- How to handle missing information]
-
+# TODO: Write the prompt for Meeting Summarizer Agent
+# Analyze meeting transcripts and extract structured information
+# 
+# Required Output Format:
+# {
+#   "meeting_title": "Brief descriptive title (3-6 words)",
+#   "agenda": "Main purpose or topic of the meeting (1-2 sentences)",
+#   "action_items": [
+#     {
+#       "task": "What needs to be done",
+#       "owner": "Person or team responsible (or 'Not specified')",
+#       "deadline": "When it's due (or 'Not specified')"
+#     }
+#   ]
+# }
+#
+# The meeting transcript is passed along with the prompt; focus on writing instructions only.
