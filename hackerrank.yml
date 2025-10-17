@@ -1,0 +1,28 @@
+version: 1
+configuration:
+  has_webserver: true
+  scoring:
+    command: bash scripts/test.sh
+    files:
+      - unit.xml
+  ide_config:
+    default_open_files:
+      - src/meeting_agent.py
+      - prompts/meeting_summary_prompt.txt
+    project_menu:
+      install: bash scripts/install.sh
+      run: bash scripts/run.sh
+      test: bash scripts/test.sh
+  readonly_paths:
+    - hackerrank.yml
+    - requirements.txt
+    - app.py
+    - src/llm.py
+    - src/helpers.py
+    - data/**
+    - tests/**
+    - judge/**
+    - scripts/**
+    - pytest.ini
+    - PROJECT_FILES_INSTRUCTIONS.md
+
