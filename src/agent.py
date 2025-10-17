@@ -31,16 +31,14 @@ class MeetingAgent:
 
     def summarize_meeting(self, transcript: str) -> Dict[str, Any]:
         prompt = f"""
-{self.summary_prompt}
+            {self.summary_prompt}
+            Meeting Transcript:
+            {transcript}
+        """
 
-{transcript}
-"""
-        
-        # Get LLM response
         response = self.llm_client.complete(prompt)
-        response_text = response.text if hasattr(response, 'text') else str(response)
-        
-        # Parse the JSON response
+        response_text = response.text if hasattr(response, "text") else str(response)
+
         return self._parse_summary_response(response_text)
 
     @staticmethod

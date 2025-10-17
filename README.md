@@ -24,7 +24,7 @@ Implement the main agent class in `src/agent.py`:
 
 - `MeetingAgent` class with a `summarize_meeting()` method that:
   - Takes a meeting transcript as input
-  - Analyzes the conversation
+  - Uses the transcript to generate a summary using LLM
   - Returns a structured summary
 
 #### 3. Output Format

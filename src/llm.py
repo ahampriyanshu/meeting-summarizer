@@ -1,11 +1,26 @@
 """LLM Helper - Provides LLM instance for the agent"""
 
 import os
+import json
+import hashlib
 from typing import Optional
 from dotenv import load_dotenv
 from llama_index.llms.openai import OpenAI
 
 load_dotenv()
+
+
+def _get_cache_file(input_hash: str) -> str:
+    """Get cache file path based on input content hash for persistence across runs."""
+    cache_dir = os.path.join(os.getcwd(), ".pytest_cache")
+    os.makedirs(cache_dir, exist_ok=True)
+    return os.path.join(cache_dir, f"cache_{input_hash[:8]}.json")
+
+
+def _get_input_hash(prompt: str, model: str, max_tokens: int) -> str:
+    """Create a hash of input parameters for caching."""
+    input_str = f"{prompt}|{model}|{max_tokens}"
+    return hashlib.sha256(input_str.encode()).hexdigest()
 
 
 class LLMClient:
@@ -40,7 +55,7 @@ class LLMClient:
 
     def complete(self, prompt: str) -> str:
         """
-        Complete a text prompt
+        Complete a text prompt with caching
 
         Args:
             prompt: The text prompt to complete
@@ -48,9 +63,36 @@ class LLMClient:
         Returns:
             The LLM response text
         """
+        cache_key = _get_input_hash(prompt, "gpt-4o-mini", 4096)
+        cache_file = _get_cache_file(cache_key)
+
+        try:
+            if os.path.exists(cache_file):
+                with open(cache_file, "r", encoding="utf-8") as f:
+                    cache_data = json.load(f)
+                    if cache_key in cache_data:
+                        return cache_data[cache_key]
+        except (json.JSONDecodeError, IOError, OSError):
+            pass
+
         try:
             response = self.llm.complete(prompt)
-            return response.text
+            content = response.text
+
+            try:
+                cache_data = {}
+                if os.path.exists(cache_file):
+                    with open(cache_file, "r", encoding="utf-8") as f:
+                        cache_data = json.load(f)
+
+                cache_data[cache_key] = content
+
+                with open(cache_file, "w", encoding="utf-8") as f:
+                    json.dump(cache_data, f, indent=2)
+            except Exception:
+                pass
+
+            return content
         except Exception as e:
             raise Exception(f"LLM completion failed: {e}") from e
 

@@ -17,7 +17,6 @@ def validate_meeting_summary(summary: Dict[str, Any]) -> bool:
     Returns:
         bool: True if valid, False otherwise
     """
-    # Check if this is an error response
     if "error" in summary:
         valid_errors = {"NOT_A_MEETING_TRANSCRIPT", "NO_ACTION_ITEMS_FOUND"}
         return (
@@ -26,29 +25,23 @@ def validate_meeting_summary(summary: Dict[str, Any]) -> bool:
             and summary["error"] in valid_errors
         )
 
-    # Otherwise validate as a normal success response
     required_keys = {"meeting_title", "agenda", "action_items"}
 
-    # Check all required keys exist
     if not all(key in summary for key in required_keys):
         return False
 
-    # Validate meeting_title is non-empty string
     if (
         not isinstance(summary["meeting_title"], str)
         or not summary["meeting_title"].strip()
     ):
         return False
 
-    # Validate agenda is non-empty string
     if not isinstance(summary["agenda"], str) or not summary["agenda"].strip():
         return False
 
-    # Validate action_items is a list
     if not isinstance(summary["action_items"], list):
         return False
 
-    # Validate each action item has required fields
     for item in summary["action_items"]:
         if not isinstance(item, dict):
             return False
@@ -57,7 +50,6 @@ def validate_meeting_summary(summary: Dict[str, Any]) -> bool:
         if not all(key in item for key in required_item_keys):
             return False
 
-        # Check that all fields are non-empty strings
         if not isinstance(item["task"], str) or not item["task"].strip():
             return False
         if not isinstance(item["owner"], str) or not item["owner"].strip():
@@ -81,12 +73,10 @@ def parse_json_response(text: str) -> Dict[str, Any]:
     Raises:
         json.JSONDecodeError: If JSON cannot be parsed
     """
-    # Try to extract JSON from markdown code blocks
     json_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
     if json_match:
         json_str = json_match.group(1)
     else:
-        # Try to find JSON object in the text
         json_match = re.search(r"\{.*\}", text, re.DOTALL)
         if json_match:
             json_str = json_match.group(0)

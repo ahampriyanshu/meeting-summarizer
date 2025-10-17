@@ -4,7 +4,6 @@ import pytest
 import sys
 from pathlib import Path
 
-# Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.agent import MeetingAgent
@@ -39,14 +38,10 @@ class TestMeetingAgent:
         result = self.agent.summarize_meeting(test_case["transcript"])
 
         assert isinstance(result, dict), "Response must be a dictionary"
-
-        # Check required keys
         required_keys = {"meeting_title", "agenda", "action_items"}
         assert required_keys.issubset(
             result.keys()
         ), f"Missing keys: {required_keys - set(result.keys())}"
-
-        # Validate using helper
         assert validate_meeting_summary(result), "Response structure is invalid"
 
     def test_standup(self):
@@ -54,11 +49,7 @@ class TestMeetingAgent:
         test_case = TEST_TRANSCRIPTS["test_case_standup"]
 
         result = self.agent.summarize_meeting(test_case["transcript"])
-
-        # Validate structure
         assert validate_meeting_summary(result), "Invalid response structure"
-
-        # LLM Judge evaluation
         evaluation = judge_meeting_summary(
             transcript=test_case["transcript"],
             agent_summary=result,

@@ -52,17 +52,17 @@ def judge_meeting_summary(
     full_prompt = f"""{JUDGE_SYSTEM_PROMPT}
 
 
-# MEETING TRANSCRIPT
+MEETING TRANSCRIPT
 ```
 {transcript}
 ```
 
-# AGENT'S SUMMARY
+AGENT'S SUMMARY
 ```json
 {agent_summary}
 ```
 
-# EXPECTED PATTERNS
+EXPECTED PATTERNS
 The summary should contain these elements (use semantic matching, not exact strings):
 
 Action Items (should extract tasks similar to):
@@ -74,7 +74,7 @@ Owners (should identify people/teams including):
 Deadlines (should extract timeframes like):
 {chr(10).join(f"- {deadline}" for deadline in expected.get('should_have_deadlines', []))}
 
-# YOUR TASK
+YOUR TASK
 Evaluate the agent's summary. Use SEMANTIC MATCHING - don't require exact word matches.
 
 For example:
@@ -124,7 +124,6 @@ A summary should FAIL if:
     try:
         response_text = llm_client.complete(full_prompt)
 
-        # Parse JSON from response
         import json
         import re
 
@@ -142,7 +141,6 @@ A summary should FAIL if:
 
         evaluation = json.loads(json_str)
 
-        # Ensure required fields
         if "pass" not in evaluation:
             evaluation["pass"] = evaluation.get("score", 0) >= 60
         if "score" not in evaluation:
@@ -153,7 +151,6 @@ A summary should FAIL if:
         return evaluation
 
     except Exception as e:
-        # Fallback evaluation if LLM judge fails
         return {
             "pass": False,
             "score": 0,

@@ -4,7 +4,6 @@ import streamlit as st
 import sys
 from pathlib import Path
 
-# Add src to path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from src.agent import MeetingAgent
@@ -21,16 +20,13 @@ def main():
         menu_items=None,
     )
 
-    # Custom CSS
     st.markdown(
         """
         <style>
         .block-container {
             padding-top: 2rem;
             padding-bottom: 2rem;
-            max-width: 800px;
-            padding-left: 5rem;
-            padding-right: 5rem;
+            max-width: 700px;
         }
         .stButton {
             display: flex;
@@ -93,7 +89,6 @@ def main():
         .stExpander {
             width: 100%;
         }
-        /* Hide Streamlit header */
         header {
             visibility: hidden;
         }
@@ -109,11 +104,7 @@ def main():
     )
 
     st.title("Meeting Summarizer Agent")
-    st.markdown(
-        "Automatically extract action items, agenda, and key information from meetings"
-    )
 
-    # Initialize agent
     try:
         llm_client = get_llm()
         agent = MeetingAgent(llm_client)
@@ -122,11 +113,8 @@ def main():
         st.info("Make sure OPENAI_API_KEY is set in your environment")
         return
 
-    st.divider()
-
-    # Sample transcripts for quick testing
     sample_transcripts = {
-        "Select Default Options": "",
+        "Select Sample Transcript": "",
         "Sample 1: Valid Meeting": """Alice: I finished the login feature yesterday. Ready to deploy.
 Bob: Great! I'll deploy it tomorrow.
 Charlie: I'm working on the dashboard. Should be done by Friday.
@@ -140,7 +128,6 @@ Sarah: Definitely. We should watch the next one together.
 John: Sounds good!""",
     }
 
-    # Initialize session state for transcript
     if "transcript" not in st.session_state:
         st.session_state.transcript = ""
 
@@ -158,9 +145,8 @@ John: Sounds good!""",
         help="Select a pre-written transcript to test the agent",
     )
 
-    # Update transcript when sample is selected
     if (
-        selected_sample != "Select Default Options"
+        selected_sample != "Select Sample Transcript"
         and sample_transcripts[selected_sample] != st.session_state.transcript
     ):
         st.session_state.transcript = sample_transcripts[selected_sample]
@@ -174,12 +160,10 @@ John: Sounds good!""",
                 try:
                     result = agent.summarize_meeting(transcript)
 
-                    # Validate response
                     if not validate_meeting_summary(result):
                         st.error("⚠️ Agent returned invalid response structure")
                         st.json(result)
                     elif "error" in result:
-                        # Handle error responses
                         if result["error"] == "NOT_A_MEETING_TRANSCRIPT":
                             st.error(
                                 "❌ This doesn't appear to be a meeting transcript"
@@ -202,7 +186,6 @@ John: Sounds good!""",
                     else:
                         st.markdown("### Meeting Summary")
 
-                        # Meeting Title and Agenda
                         st.markdown(f"**Title:** {result['meeting_title']}")
                         st.markdown(f"**Agenda:** {result['agenda']}")
 
