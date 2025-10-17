@@ -9,12 +9,24 @@ def validate_meeting_summary(summary: Dict[str, Any]) -> bool:
     """
     Validate that the meeting summary has the correct structure
 
+    Accepts both success responses and error responses
+
     Args:
         summary: Summary dictionary from the agent
 
     Returns:
         bool: True if valid, False otherwise
     """
+    # Check if this is an error response
+    if "error" in summary:
+        valid_errors = {"NOT_A_MEETING_TRANSCRIPT", "NO_ACTION_ITEMS_FOUND"}
+        return (
+            len(summary) == 1
+            and isinstance(summary["error"], str)
+            and summary["error"] in valid_errors
+        )
+
+    # Otherwise validate as a normal success response
     required_keys = {"meeting_title", "agenda", "action_items"}
 
     # Check all required keys exist

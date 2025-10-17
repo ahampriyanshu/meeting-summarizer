@@ -14,4 +14,8 @@
 #   ]
 # }
 #
+# Error cases:
+# - If input is not a meeting transcript (story, article, random text): {"error": "NOT_A_MEETING_TRANSCRIPT"}
+# - If transcript has no action items or agenda (casual conversation): {"error": "NO_ACTION_ITEMS_FOUND"}
+#
 # The meeting transcript is passed along with the prompt; focus on writing instructions only.

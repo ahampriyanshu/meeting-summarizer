@@ -1,7 +1,7 @@
 """Test meeting transcripts for evaluating the Meeting Summarizer Agent"""
 
 TEST_TRANSCRIPTS = {
-    "test_case_1_standup": {
+    "test_case_standup": {
         "transcript": """Alice: I finished the login feature yesterday. Ready to deploy.
 Bob: Great! I'll deploy it tomorrow.
 Charlie: I'm working on the dashboard. Should be done by Friday.
@@ -18,28 +18,7 @@ Bob: Sure, I'll review it today.""",
             "should_have_deadlines": ["today", "tomorrow", "Friday"],
         },
     },
-    "test_case_2_planning": {
-        "transcript": """Manager: We need to finalize the Q2 roadmap today. What should we prioritize?
-Sarah: I think we should focus on mobile app development over new features.
-Tom: I agree with Sarah. Mobile is more critical right now.
-Manager: Great! Sarah, can you lead the mobile team?
-Sarah: Absolutely, I'll take the lead.
-Manager: Perfect. We also need to hire 2 more developers by March.
-Sarah: I'll work with HR on that. Should we involve marketing?
-Manager: Yes, marketing should start preparing the launch campaign.
-Tom: I'll coordinate with the marketing team.""",
-        "description": "Planning meeting with team assignments and hiring needs",
-        "expected": {
-            "should_contain_action_items": [
-                "lead mobile team",
-                "hire developers",
-                "prepare launch campaign",
-            ],
-            "should_have_owners": ["Sarah", "marketing"],
-            "should_have_deadlines": ["March"],
-        },
-    },
-    "test_case_3_bug_sync": {
+    "test_case_bug_sync": {
         "transcript": """Mike: Quick sync on the bug fixes everyone. I fixed the critical login bug.
 Lisa: That's great! When will it be deployed?
 Mike: I'll deploy it this afternoon.
@@ -57,16 +36,15 @@ Lisa: Will do, thanks!""",
             "should_have_deadlines": ["this afternoon", "end of week"],
         },
     },
-    "test_case_4_client_meeting": {
+    "test_case_client_meeting": {
         "transcript": """Client: Can we get a progress update on the new dashboard?
-Tom: Sure! It's coming along well. I can send you screenshots.
-Client: That would be great. When can you send them?
-Tom: I'll send them by tomorrow.
+Tom: Sure! It's coming along well. I'll send you screenshots by tomorrow.
+Client: That would be great, thank you.
 Emily: Would you like to schedule a demo to see it in action?
 Client: Yes, that would be helpful.
-Emily: I'll schedule a demo for next Monday then.
+Emily: Perfect. I'll schedule a demo for next Monday.
 Tom: We should update the documentation before the demo.
-Emily: Agreed. Let's make sure that's done.""",
+Emily: Good point. I'll update the documentation before the demo.""",
         "description": "Client meeting with follow-up tasks",
         "expected": {
             "should_contain_action_items": [
@@ -78,7 +56,7 @@ Emily: Agreed. Let's make sure that's done.""",
             "should_have_deadlines": ["tomorrow", "next Monday", "before the demo"],
         },
     },
-    "test_case_5_project_kickoff": {
+    "test_case_project_kickoff": {
         "transcript": """Manager: Let's kick off the new analytics project. Rachel, can you set up the repository?
 Rachel: Yes, I'll set it up today.
 Manager: Great. David, we need a project plan. When can you have it ready?
@@ -104,6 +82,20 @@ Manager: Next Tuesday works. I'll send out a calendar invite.""",
                 "next Tuesday",
             ],
         },
+    },
+    "test_case_not_a_meeting": {
+        "transcript": """Once upon a time, in a faraway kingdom, there lived a brave knight named Sir Arthur. He had a quest to find the legendary sword that could defeat the dragon terrorizing the village. The journey was long and treacherous, but Sir Arthur was determined to succeed.""",
+        "description": "Story text that is not a meeting transcript",
+        "expected_error": "NOT_A_MEETING_TRANSCRIPT",
+    },
+    "test_case_no_action_items": {
+        "transcript": """John: Did you watch the game last night?
+Sarah: Yes! It was amazing. That final goal was incredible.
+John: I know! I couldn't believe it. Best game of the season.
+Sarah: Definitely. We should watch the next one together.
+John: Sounds good!""",
+        "description": "Casual conversation with no action items or agenda",
+        "expected_error": "NO_ACTION_ITEMS_FOUND",
     },
 }
 

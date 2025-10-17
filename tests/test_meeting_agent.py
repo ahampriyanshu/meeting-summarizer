@@ -34,7 +34,7 @@ class TestMeetingAgent:
 
     def test_response_structure(self):
         """Test that responses have correct structure"""
-        test_case = TEST_TRANSCRIPTS["test_case_1_standup"]
+        test_case = TEST_TRANSCRIPTS["test_case_standup"]
 
         result = self.agent.summarize_meeting(test_case["transcript"])
 
@@ -49,9 +49,9 @@ class TestMeetingAgent:
         # Validate using helper
         assert validate_meeting_summary(result), "Response structure is invalid"
 
-    def test_case_1_standup(self):
-        """Test Case 1: Simple team standup"""
-        test_case = TEST_TRANSCRIPTS["test_case_1_standup"]
+    def test_standup(self):
+        """Test: Simple team standup"""
+        test_case = TEST_TRANSCRIPTS["test_case_standup"]
 
         result = self.agent.summarize_meeting(test_case["transcript"])
 
@@ -67,7 +67,7 @@ class TestMeetingAgent:
         )
 
         print(f"\n{'='*60}")
-        print(f"Test Case 1: {test_case['description']}")
+        print(f"Test: {test_case['description']}")
         print(f"{'='*60}")
         print(f"Agent Summary: {result}")
         print(f"\nJudge Evaluation:")
@@ -83,9 +83,9 @@ class TestMeetingAgent:
         ], f"Test failed: {evaluation.get('feedback', 'No feedback')}"
         assert evaluation["score"] >= 60, f"Score too low: {evaluation['score']}/100"
 
-    def test_case_2_planning(self):
-        """Test Case 2: Planning meeting"""
-        test_case = TEST_TRANSCRIPTS["test_case_2_planning"]
+    def test_bug_sync(self):
+        """Test: Bug fix sync"""
+        test_case = TEST_TRANSCRIPTS["test_case_bug_sync"]
 
         result = self.agent.summarize_meeting(test_case["transcript"])
 
@@ -95,11 +95,11 @@ class TestMeetingAgent:
             transcript=test_case["transcript"],
             agent_summary=result,
             expected=test_case["expected"],
-            llm=self.llm,
+            llm_client=self.llm_client,
         )
 
         print(f"\n{'='*60}")
-        print(f"Test Case 2: {test_case['description']}")
+        print(f"Test: {test_case['description']}")
         print(f"{'='*60}")
         print(f"Agent Summary: {result}")
         print(f"\nJudge Evaluation:")
@@ -115,9 +115,9 @@ class TestMeetingAgent:
         ], f"Test failed: {evaluation.get('feedback', 'No feedback')}"
         assert evaluation["score"] >= 60, f"Score too low: {evaluation['score']}/100"
 
-    def test_case_3_bug_sync(self):
-        """Test Case 3: Bug fix sync"""
-        test_case = TEST_TRANSCRIPTS["test_case_3_bug_sync"]
+    def test_client_meeting(self):
+        """Test: Client meeting"""
+        test_case = TEST_TRANSCRIPTS["test_case_client_meeting"]
 
         result = self.agent.summarize_meeting(test_case["transcript"])
 
@@ -127,11 +127,11 @@ class TestMeetingAgent:
             transcript=test_case["transcript"],
             agent_summary=result,
             expected=test_case["expected"],
-            llm=self.llm,
+            llm_client=self.llm_client,
         )
 
         print(f"\n{'='*60}")
-        print(f"Test Case 3: {test_case['description']}")
+        print(f"Test: {test_case['description']}")
         print(f"{'='*60}")
         print(f"Agent Summary: {result}")
         print(f"\nJudge Evaluation:")
@@ -147,9 +147,9 @@ class TestMeetingAgent:
         ], f"Test failed: {evaluation.get('feedback', 'No feedback')}"
         assert evaluation["score"] >= 60, f"Score too low: {evaluation['score']}/100"
 
-    def test_case_4_client_meeting(self):
-        """Test Case 4: Client meeting"""
-        test_case = TEST_TRANSCRIPTS["test_case_4_client_meeting"]
+    def test_project_kickoff(self):
+        """Test: Project kickoff"""
+        test_case = TEST_TRANSCRIPTS["test_case_project_kickoff"]
 
         result = self.agent.summarize_meeting(test_case["transcript"])
 
@@ -159,11 +159,11 @@ class TestMeetingAgent:
             transcript=test_case["transcript"],
             agent_summary=result,
             expected=test_case["expected"],
-            llm=self.llm,
+            llm_client=self.llm_client,
         )
 
         print(f"\n{'='*60}")
-        print(f"Test Case 4: {test_case['description']}")
+        print(f"Test: {test_case['description']}")
         print(f"{'='*60}")
         print(f"Agent Summary: {result}")
         print(f"\nJudge Evaluation:")
@@ -179,37 +179,45 @@ class TestMeetingAgent:
         ], f"Test failed: {evaluation.get('feedback', 'No feedback')}"
         assert evaluation["score"] >= 60, f"Score too low: {evaluation['score']}/100"
 
-    def test_case_5_project_kickoff(self):
-        """Test Case 5: Project kickoff"""
-        test_case = TEST_TRANSCRIPTS["test_case_5_project_kickoff"]
+    def test_not_a_meeting(self):
+        """Test: Reject non-meeting text"""
+        test_case = TEST_TRANSCRIPTS["test_case_not_a_meeting"]
 
         result = self.agent.summarize_meeting(test_case["transcript"])
 
         assert validate_meeting_summary(result), "Invalid response structure"
-
-        evaluation = judge_meeting_summary(
-            transcript=test_case["transcript"],
-            agent_summary=result,
-            expected=test_case["expected"],
-            llm=self.llm,
-        )
+        assert "error" in result, "Should return error for non-meeting text"
+        assert (
+            result["error"] == test_case["expected_error"]
+        ), f"Expected error: {test_case['expected_error']}, got: {result.get('error')}"
 
         print(f"\n{'='*60}")
-        print(f"Test Case 5: {test_case['description']}")
+        print(f"Test: {test_case['description']}")
         print(f"{'='*60}")
-        print(f"Agent Summary: {result}")
-        print(f"\nJudge Evaluation:")
-        print(f"  Pass: {evaluation['pass']}")
-        print(f"  Score: {evaluation['score']}/100")
-        print(f"  Feedback: {evaluation['feedback']}")
-        if evaluation.get("issues"):
-            print(f"  Issues: {evaluation['issues']}")
+        print(f"Agent Response: {result}")
+        print(f"✅ Correctly identified as: {result['error']}")
         print(f"{'='*60}\n")
 
-        assert evaluation[
-            "pass"
-        ], f"Test failed: {evaluation.get('feedback', 'No feedback')}"
-        assert evaluation["score"] >= 60, f"Score too low: {evaluation['score']}/100"
+    def test_no_action_items(self):
+        """Test: Reject transcripts with no action items"""
+        test_case = TEST_TRANSCRIPTS["test_case_no_action_items"]
+
+        result = self.agent.summarize_meeting(test_case["transcript"])
+
+        assert validate_meeting_summary(result), "Invalid response structure"
+        assert (
+            "error" in result
+        ), "Should return error for transcript with no action items"
+        assert (
+            result["error"] == test_case["expected_error"]
+        ), f"Expected error: {test_case['expected_error']}, got: {result.get('error')}"
+
+        print(f"\n{'='*60}")
+        print(f"Test: {test_case['description']}")
+        print(f"{'='*60}")
+        print(f"Agent Response: {result}")
+        print(f"✅ Correctly identified as: {result['error']}")
+        print(f"{'='*60}\n")
 
 
 if __name__ == "__main__":

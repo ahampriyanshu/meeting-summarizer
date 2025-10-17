@@ -30,23 +30,8 @@ class MeetingAgent:
             )
 
     def summarize_meeting(self, transcript: str) -> Dict[str, Any]:
-        """Summarize a meeting transcript and extract action items
-        
-        Args:
-            transcript: The meeting transcript or notes
-            
-        Returns:
-            Dictionary with meeting_title, agenda, and action_items
-        """
-        # TODO: Implement the meeting summarization logic
-        # 1. Create a prompt combining the summary_prompt with the transcript
-        # 2. Call the LLM using self.llm_client.complete()
-        # 3. Parse the JSON response using _parse_summary_response()
-        # 4. Return the parsed dictionary
-        
-        raise NotImplementedError(
-            "Candidate must implement the summarize_meeting() method"
-        )
+        """Summarize a meeting transcript and extract action items, owners, and deadlines"""
+        raise NotImplementedError("summarize_meeting must be implemented by the user")
 
     @staticmethod
     def _parse_summary_response(response_text: str) -> Dict[str, Any]:

@@ -100,22 +100,17 @@ def main():
     # Sample transcripts for quick testing
     sample_transcripts = {
         "None": "",
-        "Sample 1: Team Standup": """Alice: I finished the login feature yesterday. Ready to deploy.
+        "Sample 1: Valid Meeting": """Alice: I finished the login feature yesterday. Ready to deploy.
 Bob: Great! I'll deploy it tomorrow.
 Charlie: I'm working on the dashboard. Should be done by Friday.
 Alice: Can someone review my code before we deploy?
 Bob: Sure, I'll review it today.""",
-        "Sample 2: Planning Meeting": """Sarah: Let's finalize the Q2 roadmap today. I think we should prioritize mobile app development.
-Tom: I agree. Mobile is more important than new features right now.
-Sarah: Great! I'll lead the mobile team then.
-Tom: Sounds good. We need to hire 2 more developers by March.
-Sarah: Yes, and marketing should start preparing the launch campaign.
-Tom: I'll talk to the marketing team tomorrow.""",
-        "Sample 3: Bug Fix Sync": """Mike: Quick sync on the bug fixes everyone. I fixed the critical login bug.
-Lisa: That's great! When will it be deployed?
-Mike: This afternoon. Lisa, how's the performance issue?
-Lisa: Still working on it. Should be done by end of week.
-Mike: Perfect. Let me know if you need any help.""",
+        "Sample 2: Article": """Once upon a time, in a faraway kingdom, there lived a brave knight named Sir Arthur. He had a quest to find the legendary sword that could defeat the dragon terrorizing the village. The journey was long and treacherous, but Sir Arthur was determined to succeed.""",
+        "Sample 3: Casual Chat": """John: Did you watch the game last night?
+Sarah: Yes! It was amazing. That final goal was incredible.
+John: I know! I couldn't believe it. Best game of the season.
+Sarah: Definitely. We should watch the next one together.
+John: Sounds good!""",
     }
 
     # Initialize session state for transcript
@@ -159,6 +154,27 @@ Mike: Perfect. Let me know if you need any help.""",
                         if not validate_meeting_summary(result):
                             st.error("⚠️ Agent returned invalid response structure")
                             st.json(result)
+                        elif "error" in result:
+                            # Handle error responses
+                            if result["error"] == "NOT_A_MEETING_TRANSCRIPT":
+                                st.error(
+                                    "❌ This doesn't appear to be a meeting transcript"
+                                )
+                                st.info(
+                                    "The input looks like a story, article, or random text. "
+                                    "Please provide an actual meeting conversation."
+                                )
+                            elif result["error"] == "NO_ACTION_ITEMS_FOUND":
+                                st.error("❌ No action items or agenda found")
+                                st.info(
+                                    "This appears to be casual conversation without business context. "
+                                    "Meeting transcripts should have an agenda and actionable outcomes."
+                                )
+                            else:
+                                st.error(f"❌ Error: {result['error']}")
+
+                            with st.expander("📊 View Raw Response"):
+                                st.json(result)
                         else:
                             st.success("✅ Meeting summary generated successfully!")
 
