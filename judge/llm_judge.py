@@ -34,24 +34,21 @@ The agent should pass with a score >= 60.
 
 
 def judge_meeting_summary(
-    transcript: str,
-    agent_summary: Dict[str, Any],
-    expected: Dict[str, Any],
-    llm_client
+    transcript: str, agent_summary: Dict[str, Any], expected: Dict[str, Any], llm_client
 ) -> Dict[str, Any]:
     """
     Use LLM to judge the quality of a meeting summary using semantic evaluation
-    
+
     Args:
         transcript: The meeting transcript
         agent_summary: The agent's summary
         expected: Expected patterns (action items, owners, deadlines)
         llm_client: LLM client instance
-        
+
     Returns:
         dict: Judge evaluation with pass/fail, score, and feedback
     """
-    
+
     full_prompt = f"""{JUDGE_SYSTEM_PROMPT}
 
 
@@ -123,26 +120,28 @@ A summary should FAIL if:
 - Output structure is invalid
 - Score < 60
 """
-    
+
     try:
         response_text = llm_client.complete(full_prompt)
-        
+
         # Parse JSON from response
         import json
         import re
-        
-        json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', response_text, re.DOTALL)
+
+        json_match = re.search(
+            r"```(?:json)?\s*(\{.*?\})\s*```", response_text, re.DOTALL
+        )
         if json_match:
             json_str = json_match.group(1)
         else:
-            json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+            json_match = re.search(r"\{.*\}", response_text, re.DOTALL)
             if json_match:
                 json_str = json_match.group(0)
             else:
                 json_str = response_text
-        
+
         evaluation = json.loads(json_str)
-        
+
         # Ensure required fields
         if "pass" not in evaluation:
             evaluation["pass"] = evaluation.get("score", 0) >= 60
@@ -150,9 +149,9 @@ A summary should FAIL if:
             evaluation["score"] = 60 if evaluation.get("pass") else 40
         if "feedback" not in evaluation:
             evaluation["feedback"] = "Evaluation completed"
-        
+
         return evaluation
-        
+
     except Exception as e:
         # Fallback evaluation if LLM judge fails
         return {
@@ -160,6 +159,5 @@ A summary should FAIL if:
             "score": 0,
             "feedback": f"Judge evaluation failed: {str(e)}",
             "criteria_scores": {},
-            "issues": [f"Judge error: {str(e)}"]
+            "issues": [f"Judge error: {str(e)}"],
         }
-

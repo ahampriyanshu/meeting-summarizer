@@ -7,8 +7,8 @@ configuration:
       - unit.xml
   ide_config:
     default_open_files:
-      - src/meeting_agent.py
-      - prompts/meeting_summary_prompt.txt
+      - src/agent.py
+      - prompts/summary.txt
     project_menu:
       install: bash scripts/install.sh
       run: bash scripts/run.sh

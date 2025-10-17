@@ -7,46 +7,46 @@ from typing import Dict, Any
 class MeetingAgent:
     """
     Meeting Summarizer Agent
-    
+
     This agent analyzes meeting transcripts and extracts:
     - Meeting title (inferred from content)
     - Main agenda (1-2 sentence summary)
     - Action items with task, owner, and deadline
     """
-    
+
     def __init__(self, llm_client):
         """
         Initialize the MeetingAgent
-        
+
         Args:
             llm_client: LLM client instance from src.llm.get_llm()
         """
         self.llm_client = llm_client
         self.prompt_template = self._load_prompt()
-    
+
     def _load_prompt(self) -> str:
         """
         Load the meeting summary prompt from file
-        
+
         Returns:
             str: Prompt template content
         """
-        prompt_path = Path(__file__).parent.parent / "prompts" / "meeting_summary_prompt.txt"
+        prompt_path = Path(__file__).parent.parent / "prompts" / "summary.txt"
         with open(prompt_path, "r") as f:
             return f.read()
-    
+
     def summarize_meeting(self, transcript: str) -> Dict[str, Any]:
         """
         CANDIDATE IMPLEMENTS: Summarize a meeting transcript
-        
+
         This method should:
         1. Use the LLM with the loaded prompt to analyze the transcript
         2. Extract the meeting title, agenda, and action items
         3. Return a properly formatted dictionary
-        
+
         Args:
             transcript (str): Meeting transcript or notes
-            
+
         Returns:
             dict: Summary dictionary with the following structure:
                 {
@@ -60,7 +60,7 @@ class MeetingAgent:
                         }
                     ]
                 }
-        
+
         Example:
             >>> agent = MeetingAgent(llm)
             >>> result = agent.summarize_meeting(
@@ -84,5 +84,6 @@ class MeetingAgent:
                 ]
             }
         """
-        raise NotImplementedError("Candidate must implement the summarize_meeting() method")
-
+        raise NotImplementedError(
+            "Candidate must implement the summarize_meeting() method"
+        )

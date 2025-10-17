@@ -10,12 +10,12 @@ load_dotenv()
 
 class LLMClient:
     """Simple LLM client for text completions"""
-    
+
     def __init__(self):
         """Initialize LLM client with environment validation"""
         self._validate_environment()
         self._llm = None
-    
+
     def _validate_environment(self):
         """Validate required environment variables"""
         if not os.getenv("OPENAI_API_KEY"):
@@ -26,7 +26,7 @@ class LLMClient:
                 "OPENAI_API_BASE=https://api.openai.com/v1 (optional)\n"
                 "Example: OPENAI_API_KEY=sk-your-key python app.py"
             )
-    
+
     @property
     def llm(self) -> OpenAI:
         """Get LLM instance (lazy initialization)"""
@@ -37,14 +37,14 @@ class LLMClient:
                 temperature=0.1,
             )
         return self._llm
-    
+
     def complete(self, prompt: str) -> str:
         """
         Complete a text prompt
-        
+
         Args:
             prompt: The text prompt to complete
-            
+
         Returns:
             The LLM response text
         """
@@ -64,4 +64,3 @@ def get_llm() -> LLMClient:
     if _llm_client is None:
         _llm_client = LLMClient()
     return _llm_client
-
