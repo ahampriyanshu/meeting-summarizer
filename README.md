@@ -1,4 +1,4 @@
-Teams hold multiple meetings daily, with action items, owners, and deadlines scattered across notes. Manually extracting this information is time-consuming and error prone. You are given the task to automate this process.
+Your team holds multiple meetings daily, with action items, owners, and deadlines scattered across notes. Manually extracting this information is time-consuming and error prone. You are given the task to automate this process.
 
 ### Task
 

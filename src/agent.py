@@ -30,16 +30,8 @@ class MeetingAgent:
             )
 
     def summarize_meeting(self, transcript: str) -> Dict[str, Any]:
-        prompt = f"""
-            {self.summary_prompt}
-            Meeting Transcript:
-            {transcript}
-        """
-
-        response = self.llm_client.complete(prompt)
-        response_text = response.text if hasattr(response, "text") else str(response)
-
-        return self._parse_summary_response(response_text)
+        """Summarize a meeting transcript and extract action items, owners, and deadlines"""
+        raise NotImplementedError("summarize_meeting must be implemented by the user")
 
     @staticmethod
     def _parse_summary_response(response_text: str) -> Dict[str, Any]:
