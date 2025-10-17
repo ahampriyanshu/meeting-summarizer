@@ -28,20 +28,36 @@ def main():
         .block-container {
             padding-top: 2rem;
             padding-bottom: 2rem;
-            max-width: 1000px;
+            max-width: 800px;
+            padding-left: 5rem;
+            padding-right: 5rem;
+        }
+        .stButton {
+            display: flex;
+            justify-content: center;
         }
         .stButton > button {
             background-color: #4A89F3;
             color: white !important;
             border: none;
             border-radius: 0.5rem;
-            padding: 0.75rem 2rem;
+            padding: 0.75rem 2.5rem;
             font-weight: 600;
-            width: 100%;
+            width: auto;
+            min-width: 250px;
         }
         .stButton > button:hover {
             background-color: #3A79E3;
             color: white !important;
+        }
+        .stTextArea > div > div > textarea {
+            width: 100%;
+        }
+        .stSelectbox > div {
+            width: 100%;
+        }
+        .stMarkdown {
+            width: 100%;
         }
         .transcript-card {
             background-color: #f8f9fa;
@@ -49,6 +65,7 @@ def main():
             border-radius: 0.5rem;
             padding: 1.5rem;
             margin: 1rem 0;
+            width: 100%;
         }
         .summary-card {
             background-color: #e7f3ff;
@@ -56,13 +73,25 @@ def main():
             border-radius: 0.5rem;
             padding: 1.5rem;
             margin: 1rem 0;
+            width: 100%;
         }
         .action-item {
-            background-color: white;
+            background-color: rgba(74, 137, 243, 0.1);
             border-left: 4px solid #4A89F3;
             padding: 1rem;
             margin: 0.5rem 0;
             border-radius: 0.25rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .stAlert {
+            width: 100%;
+        }
+        .stSuccess, .stError, .stWarning, .stInfo {
+            width: 100%;
+        }
+        .stExpander {
+            width: 100%;
         }
         /* Hide Streamlit header */
         header {
@@ -79,7 +108,7 @@ def main():
         unsafe_allow_html=True,
     )
 
-    st.title("📝 Meeting Summarizer Agent")
+    st.title("Meeting Summarizer Agent")
     st.markdown(
         "Automatically extract action items, agenda, and key information from meetings"
     )
@@ -95,11 +124,9 @@ def main():
 
     st.divider()
 
-    st.markdown("Enter the meeting transcript or notes to generate a summary")
-
     # Sample transcripts for quick testing
     sample_transcripts = {
-        "None": "",
+        "Select Default Options": "",
         "Sample 1: Valid Meeting": """Alice: I finished the login feature yesterday. Ready to deploy.
 Bob: Great! I'll deploy it tomorrow.
 Charlie: I'm working on the dashboard. Should be done by Friday.
@@ -118,7 +145,7 @@ John: Sounds good!""",
         st.session_state.transcript = ""
 
     transcript = st.text_area(
-        "Enter meeting transcript:",
+        "Enter the meeting transcript or notes to generate a summary:",
         placeholder="Paste your meeting notes or transcript here...",
         height=200,
         value=st.session_state.transcript,
@@ -133,86 +160,80 @@ John: Sounds good!""",
 
     # Update transcript when sample is selected
     if (
-        selected_sample != "None"
+        selected_sample != "Select Default Options"
         and sample_transcripts[selected_sample] != st.session_state.transcript
     ):
         st.session_state.transcript = sample_transcripts[selected_sample]
         st.rerun()
 
-    _, col2, _ = st.columns([1, 2, 1])
+    if st.button("Generate Summary", key="summarize"):
+        if not transcript or not transcript.strip():
+            st.warning("Please enter a meeting transcript")
+        else:
+            with st.spinner("Analyzing meeting transcript..."):
+                try:
+                    result = agent.summarize_meeting(transcript)
 
-    with col2:
-        if st.button("🚀 Generate Summary", key="summarize"):
-            if not transcript or not transcript.strip():
-                st.warning("Please enter a meeting transcript")
-            else:
-                with st.spinner("Analyzing meeting transcript..."):
-                    try:
-                        result = agent.summarize_meeting(transcript)
-
-                        # Validate response
-                        if not validate_meeting_summary(result):
-                            st.error("⚠️ Agent returned invalid response structure")
-                            st.json(result)
-                        elif "error" in result:
-                            # Handle error responses
-                            if result["error"] == "NOT_A_MEETING_TRANSCRIPT":
-                                st.error(
-                                    "❌ This doesn't appear to be a meeting transcript"
-                                )
-                                st.info(
-                                    "The input looks like a story, article, or random text. "
-                                    "Please provide an actual meeting conversation."
-                                )
-                            elif result["error"] == "NO_ACTION_ITEMS_FOUND":
-                                st.error("❌ No action items or agenda found")
-                                st.info(
-                                    "This appears to be casual conversation without business context. "
-                                    "Meeting transcripts should have an agenda and actionable outcomes."
-                                )
-                            else:
-                                st.error(f"❌ Error: {result['error']}")
-
-                            with st.expander("📊 View Raw Response"):
-                                st.json(result)
+                    # Validate response
+                    if not validate_meeting_summary(result):
+                        st.error("⚠️ Agent returned invalid response structure")
+                        st.json(result)
+                    elif "error" in result:
+                        # Handle error responses
+                        if result["error"] == "NOT_A_MEETING_TRANSCRIPT":
+                            st.error(
+                                "❌ This doesn't appear to be a meeting transcript"
+                            )
+                            st.info(
+                                "The input looks like a story, article, or random text. "
+                                "Please provide an actual meeting conversation."
+                            )
+                        elif result["error"] == "NO_ACTION_ITEMS_FOUND":
+                            st.error("❌ No action items or agenda found")
+                            st.info(
+                                "This appears to be casual conversation without business context. "
+                                "Meeting transcripts should have an agenda and actionable outcomes."
+                            )
                         else:
-                            st.success("✅ Meeting summary generated successfully!")
+                            st.error(f"❌ Error: {result['error']}")
 
-                            # Display results
-                            st.markdown("### 📋 Meeting Summary")
+                        with st.expander("View Raw Response"):
+                            st.json(result)
+                    else:
+                        st.markdown("### Meeting Summary")
 
-                            # Meeting Title and Agenda
-                            st.markdown(f"**Title:** {result['meeting_title']}")
-                            st.markdown(f"**Agenda:** {result['agenda']}")
+                        # Meeting Title and Agenda
+                        st.markdown(f"**Title:** {result['meeting_title']}")
+                        st.markdown(f"**Agenda:** {result['agenda']}")
 
-                            st.markdown("### ✅ Action Items")
+                        st.markdown("### Action Items")
 
-                            if result["action_items"]:
-                                for idx, item in enumerate(result["action_items"], 1):
-                                    st.markdown(
-                                        f"""
-                                        <div class='action-item'>
-                                            <strong>#{idx}: {item['task']}</strong><br>
-                                            <small>👤 Owner: {item['owner']}</small><br>
-                                            <small>📅 Deadline: {item['deadline']}</small>
-                                        </div>
-                                    """,
-                                        unsafe_allow_html=True,
-                                    )
-                            else:
-                                st.info("No action items found in this meeting")
+                        if result["action_items"]:
+                            for idx, item in enumerate(result["action_items"], 1):
+                                st.markdown(
+                                    f"""
+                                    <div class='action-item'>
+                                        <strong>#{idx}: {item['task']}</strong><br>
+                                        <small>Owner: {item['owner']}</small><br>
+                                        <small>Deadline: {item['deadline']}</small>
+                                    </div>
+                                """,
+                                    unsafe_allow_html=True,
+                                )
+                        else:
+                            st.info("No action items found in this meeting")
 
-                            with st.expander("📊 View Raw JSON"):
-                                st.json(result)
+                        with st.expander("View Raw JSON"):
+                            st.json(result)
 
-                    except NotImplementedError:
-                        st.error("❌ Agent not implemented yet!")
-                        st.info(
-                            "Please implement the `summarize_meeting()` method in `src/agent.py`"
-                        )
-                    except Exception as e:
-                        st.error(f"❌ Error processing transcript: {str(e)}")
-                        st.exception(e)
+                except NotImplementedError:
+                    st.error("❌ Agent not implemented yet!")
+                    st.info(
+                        "Please implement the `summarize_meeting()` method in `src/agent.py`"
+                    )
+                except Exception as e:
+                    st.error(f"❌ Error processing transcript: {str(e)}")
+                    st.exception(e)
 
 
 if __name__ == "__main__":
