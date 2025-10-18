@@ -27,10 +27,19 @@ def main():
             padding-top: 2rem;
             padding-bottom: 2rem;
             max-width: 700px;
+            margin: 0 !important;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            text-align: left !important;
+        }
+        p, div, span {
+            text-align: left !important;
         }
         .stButton {
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
+            margin: 0 !important;
+            padding: 0 !important;
         }
         .stButton > button {
             background-color: #4A89F3;
@@ -40,20 +49,33 @@ def main():
             padding: 0.75rem 2.5rem;
             font-weight: 600;
             width: auto;
-            min-width: 250px;
+            min-width: 175px;
         }
         .stButton > button:hover {
             background-color: #3A79E3;
             color: white !important;
         }
+        .stTextArea {
+            text-align: left !important;
+        }
         .stTextArea > div > div > textarea {
             width: 100%;
+        }
+        .stTextArea label {
+            text-align: left !important;
+        }
+        .stSelectbox {
+            text-align: left !important;
         }
         .stSelectbox > div {
             width: 100%;
         }
+        .stSelectbox label {
+            text-align: left !important;
+        }
         .stMarkdown {
             width: 100%;
+            text-align: left !important;
         }
         .transcript-card {
             background-color: #f8f9fa;
